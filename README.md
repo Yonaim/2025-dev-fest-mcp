@@ -1,123 +1,258 @@
-# React 18 → React 19 마이그레이션 핸즈온 세션
+# 코딩 에이전트를 똑똑하게 사용하기 with MCP 서버
 
 ## 🎯 세션 목표
 
-Gemini CLI와 Context7 MCP를 활용하여 React 18 코드를 React 19의 최신 기능으로 마이그레이션하는 실전 경험
+MCP(Model Context Protocol)를 활용하여 **문서 학습 → 계획 수립 → 테스트 작성 → 코드 리팩토링 → 검증 → PR 생성**에 이르는 전체 워크플로를 자동화합니다.
 
-## 📚 학습 내용
+## 📚 사용할 MCP 서버
 
-1. **React 19 Actions**: 복잡한 폼 로직을 선언적으로 간소화
-2. **React 19 use Hook**: 데이터 페칭의 새로운 패러다임
-3. **Context7**: 최신 기술 문서에 실시간으로 연결된 AI 파트너
+1. **Context7**: 최신 라이브러리 문서를 실시간으로 학습
+2. **GitHub**: 이슈/PR 생성 및 관리 자동화
+3. **PlayWright**: E2E 테스트 자동 생성 및 실행
 
 ## 🚀 시작하기
 
-### 1. 의존성 설치
+### 1. MCP 서버 설정
+
+#### 1.1 기본 설정 확인
+
+프로젝트의 `/.gemini` 폴더에 기본적인 Gemini CLI MCP 명세가 이미 구성되어 있습니다.
+
+#### 1.2 MCP 서버 설치
+
+터미널에서 다음 명령어를 실행하여 필요한 MCP 서버를 설치합니다:
 
 ```bash
-npm install
-# 또는
+# GitHub MCP 서버 설치
+gemini extensions install https://github.com/github/github-mcp-server
+
+# Context7 MCP 서버 설치
+gemini extensions install https://github.com/upstash/context7
+```
+
+> **참고:** PlayWright MCP는 이미 `settings.json`에 명세되어 있습니다.
+
+#### 1.3 환경 변수 설정
+
+`/.gemini` 폴더 안에 `.env` 파일을 생성하고 필요한 API 키를 추가합니다:
+
+##### Context7 API 키 발급
+
+1. [Context7 웹사이트](https://context7.com/)에 접속하여 회원가입
+2. 대시보드에서 API 키 발급
+3. `/.gemini/.env` 파일에 다음 내용 추가:
+
+```bash
+CONTEXT7_API_KEY=your_context7_api_key_here
+```
+
+##### GitHub Personal Access Token (PAT) 발급
+
+1. [GitHub PAT 생성 페이지](https://github.com/settings/personal-access-tokens/new)에 접속
+2. 다음 권한 설정:
+   - **Repository Access**: All repositories 선택
+   - **Permissions**: Issues, Pull Requests 선택
+3. 토큰 생성 후 `/.gemini/.env` 파일에 추가:
+
+```bash
+GITHUB_TOKEN=your_github_pat_here
+```
+
+##### 최종 .env 파일 예시
+
+```bash
+# /.gemini/.env
+CONTEXT7_API_KEY=your_context7_api_key_here
+GITHUB_TOKEN=your_github_pat_here
+```
+
+### 2. 의존성 설치
+
+```bash
 yarn install
 ```
 
-### 2. 개발 서버 실행
+### 3. 개발 서버 실행
 
 ```bash
-npm run dev
-# 또는
-yarn dev
+yarn start
 ```
 
-### 3. Gemini CLI 설정 확인
+### 4. MCP 서버 연결 확인
 
-```bash
-# Context7이 정상 작동하는지 테스트
-gemini -c context7 "Test"
-```
+Gemini CLI를 실행하고 `/mcp` 명령어를 입력하여 MCP 서버 연결 상태를 확인하세요.
+
+다음 3개의 MCP 서버가 모두 표시되면 설정이 완료된 것입니다:
+
+- **context7** - 최신 라이브러리 문서 학습
+- **github** - GitHub 이슈/PR 관리
+- **playwright** - E2E 테스트 자동화
+
+![MCP 서버 연결 확인](./public/mcp.png)
 
 ## 📁 프로젝트 구조
 
 ```
-hands-on-react18/
+client/
 ├── src/
-│   ├── before/              # React 18 버전 (마이그레이션 전)
-│   │   ├── ProfileForm.jsx  # 시나리오 1: 복잡한 폼 로직
-│   │   └── UserProfile.jsx  # 시나리오 2: useEffect 데이터 페칭
-│   ├── after/               # React 19 버전 (마이그레이션 후)
-│   │   ├── ProfileForm.jsx  # Actions + useActionState
-│   │   └── UserProfile.jsx  # use Hook + Suspense
-│   ├── broken/              # 트러블슈팅용 잘못된 예제
-│   │   └── ProfileForm_broken.jsx
-│   ├── App.jsx             # 메인 앱
-│   └── main.jsx
-└── README.md
+│   ├── before/                  # 리팩토링 전 코드 (React 18 패턴)
+│   │   ├── ProfileForm.jsx      # 폼 제출 처리 (useState 4개 사용)
+│   │   └── TextGenerator.jsx    # AI 텍스트 생성 (수동 상태 관리)
+│   ├── after/                   # 리팩토링 후 코드 (React 19 패턴)
+│   │   └── (실습 중 생성됨)
+│   ├── api.js                   # Mock API 함수
+│   ├── ErrorBoundary.jsx        # 에러 처리용 컴포넌트
+│   ├── App.jsx                  # 메인 앱 컴포넌트
+│   ├── main.jsx                 # 진입점
+│   └── index.css                # 스타일
+├── tests/                       # 테스트 파일 (선택사항)
+│   └── .gitkeep
+├── PROMPTS_CHEATSHEET.md        # 프롬프트 치트시트
+├── INSTRUCTOR_GUIDE.md          # 강사용 가이드
+└── README.md                    # 이 파일
 ```
 
-## 🎓 시나리오 1: 폼(Form) 로직 마이그레이션
+## 🍀 기초 실습: Context7로 문서 학습하기
 
-### Before (React 18)
+### 목표
 
-- ❌ 3개의 useState (name, isPending, error)
-- ❌ 수동 event.preventDefault()
-- ❌ 명령형 상태 관리 (setIsPending, setError)
-- ❌ 수동 UI 비활성화 (disabled={isPending})
+Context7 MCP를 사용하여 최신 라이브러리 문서를 학습하고 코드에 반영합니다.
 
-### After (React 19)
+### 프롬프트
 
-- ✅ useActionState로 통합 상태 관리
-- ✅ <form action={formAction}> 네이티브 지원
-- ✅ useFormStatus로 자동 pending 상태
-- ✅ 선언적 폼 처리
-
-### Context7 프롬프트
-
-```bash
-gemini -c context7 "이 React 18 폼 코드(파일:./src/before/ProfileForm.jsx)를 React 19의 'Actions' 기능을 사용하도록 마이그레이션해줘. 'useActionState'와 'useFormStatus' 훅을 활용해서 로딩, 에러 처리를 포함한 코드를 더 간결하게 만들고 싶어. 마이그레이션된 전체 코드를 제공해줘."
+```
+c7을 이용해서 google/genai 라이브러리를 학습하고
+텍스트 생성을 생성형 AI를 사용하도록 변경해줘
 ```
 
-## 🎓 시나리오 2: 데이터 페칭 마이그레이션
+### 결과
 
-### Before (React 18)
+- Context7이 google/genai 최신 문서를 가져옴
+- Gemini가 문서 기반으로 코드를 업데이트
 
-- ❌ useEffect + 3개의 useState (data, loading, error)
-- ❌ 경쟁 상태(race condition) 수동 방지
-- ❌ 복잡한 클린업 로직
-- ❌ 수동 로딩/에러 UI 처리
+---
 
-### After (React 19)
+## 🧨 심화 실습: MCP 통합 워크플로
 
-- ✅ use(promise)로 렌더링 단계 데이터 읽기
-- ✅ Suspense로 선언적 로딩 처리
-- ✅ ErrorBoundary로 선언적 에러 처리
-- ✅ 자동 경쟁 상태 방지
+현재 `src/before/ProfileForm.jsx`를 React 19의 최신 문법으로 리팩토링하는 전체 워크플로를 진행합니다.
 
-### Context7 프롬프트
+### Phase 1: React 19 문서 학습
 
-```bash
-gemini -c context7 "이 React 18 데이터 페칭 코드(파일:./src/before/UserProfile.jsx)를 React 19의 'use' 훅과 '<Suspense>'를 사용하도록 마이그레이션해줘. 'useEffect'와 3개의 'useState'를 모두 제거하고 싶어. 부모 컴포넌트가 <Suspense>를 어떻게 사용해야 하는지도 함께 보여줘."
+**프롬프트:**
+
+```
+c7을 이용해서 React 19 문서를 학습해줘.
 ```
 
-## 🐛 트러블슈팅: useFormStatus의 함정
+**결과:** Copilot이 React 19 최신 지식을 습득합니다.
 
-### 문제 상황
+---
 
-```javascript
-// ❌ 작동하지 않음 - pending이 항상 false
-export default function ProfileForm() {
-  const { pending } = useFormStatus(); // 같은 컴포넌트에서 호출
-  return <form>...</form>;
-}
+### Phase 2: 계획 수립 및 이슈 생성
+
+**프롬프트:**
+
+```
+현재 작업 중인 내용을 최신 react 문법을 이용해 리팩토링할 계획을 세우고
+GitHub MCP를 이용하여 새로운 이슈로 만들어 줘.
 ```
 
-### 해결 방법
+**결과:**
 
-```javascript
-// ✅ 올바른 사용법 - 자식 컴포넌트에서 호출
-function SubmitButton() {
-  const { pending } = useFormStatus(); // 부모 <form> 추적
-  return <button disabled={pending}>제출</button>;
-}
+- Copilot이 현재 파일 분석 후 리팩토링 계획 수립
+- GitHub MCP가 자동으로 이슈 생성 (예: Issue #1)
+
+---
+
+### Phase 3: 테스트 작성
+
+**프롬프트:**
+
 ```
+이 폼의 동작을 검증할 PlayWright 테스트 코드를 만들어서
+'tests/ProfileForm.spec.js' 파일로 저장해 줘.
+```
+
+**테스트 시나리오:**
+
+- ✅ 폼이 정상적으로 렌더링되는지 확인
+- ✅ 이름 입력 필드에 값 입력 가능한지 확인
+- ✅ 저장 버튼 클릭 시 로딩 상태로 변경되는지 확인 (`aria-busy="true"`)
+- ✅ 성공 메시지가 표시되는지 확인 (`data-testid="profile-success-message"`)
+- ✅ 에러 시나리오 테스트 (빈 이름 제출 등)
+
+**결과:**
+
+- PlayWright를 사용한 E2E 테스트 생성
+- tests/ProfileForm.spec.js 파일 자동 생성
+
+---
+
+### Phase 4: 코드 리팩토링
+
+**프롬프트:**
+
+```
+ProfileForm을 최신 리액트 문법을 이용하여 리팩토링 진행해줘
+그리고 완성된 파일을 App.jsx에 추가해줘
+```
+
+**리팩토링 체크리스트:**
+
+- ✅ `useActionState`로 상태 관리 통합
+- ✅ 기존 `data-testid` 속성 유지 (테스트 호환성)
+- ✅ `aria-busy`, `role` 등 접근성 속성 유지
+- ✅ 동일한 UI/UX 동작 보장
+
+**결과:**
+
+- Copilot이 계획에 따라 코드를 리팩토링
+- `src/after/ProfileForm.jsx` 파일 생성
+- App.jsx에 리팩토링된 파일 추가
+
+---
+
+### Phase 5: 리팩토링 검증
+
+**프롬프트:**
+
+```
+PlayWright 테스트를 실행해서
+리팩토링이 잘 됐는지 확인해 줘.
+```
+
+**검증 포인트:**
+
+- ✅ Before 버전과 동일한 테스트가 After 버전에서도 통과
+- ✅ 모든 `data-testid` 속성이 유지되어 테스트 코드 재사용 가능
+- ✅ 사용자 경험(로딩, 에러, 성공 메시지)이 동일하게 작동
+- ✅ React 19의 새로운 기능 활용으로 코드는 더 간결해짐
+
+**결과:** PlayWright 테스트 실행 및 결과 확인
+
+---
+
+### Phase 6: PR 생성
+
+**프롬프트:**
+
+```
+변경 사항을 커밋하고,
+아까 만든 이슈와 연결해서 PR까지 올려 줘.
+```
+
+**결과:**
+
+- GitHub MCP가 커밋 메시지 자동 생성
+- 이슈와 연결된 PR 자동 생성
+
+---
+
+## 💡 핵심 포인트
+
+- **Context7**: 최신 문서를 실시간으로 학습하여 AI에게 정확한 컨텍스트 제공
+- **GitHub MCP**: 이슈/PR 관리 자동화로 워크플로 간소화
+- **PlayWright MCP**: 자동 테스트 생성으로 리팩토링 안정성 확보
 
 ### Context7 진단 프롬프트
 
@@ -130,45 +265,33 @@ gemini -c context7 "React 19에서 useFormStatus를 사용했는데 'pending' �
 ### Context7의 최신 정보력 증명
 
 ```bash
-gemini -c context7 "방금 릴리스된 React 19.2 (2025년 10월)의 새로운 기능인 '<Activity />' 컴포넌트에 대해 설명해줘. 어떤 문제를 해결하고, 'mode' prop은 어떻게 사용하는 거야?"
+gemini -c context7 "방금 릴리스된 React 19.2 (2025년 10월)의 새로운 기능인 '<Activity />' 컴포넌트에 대해 설명해줘. 어떤 문제를 해결하기 위해서 사용하는 거야?"
 ```
-
-## 📊 마이그레이션 비교표
-
-### 폼 처리
-
-| 개념      | React 18                  | React 19           |
-| --------- | ------------------------- | ------------------ |
-| 제출 처리 | onSubmit + preventDefault | <form action={fn}> |
-| 로딩 상태 | useState(isPending)       | useFormStatus()    |
-| 에러 처리 | useState(error)           | useActionState()   |
-
-### 데이터 페칭
-
-| 개념      | React 18                | React 19            |
-| --------- | ----------------------- | ------------------- |
-| 페칭 방식 | useEffect (side effect) | use(promise)        |
-| 로딩 UI   | useState + if문         | <Suspense fallback> |
-| 경쟁 상태 | 수동 ignore 변수        | 자동 처리           |
 
 ## 💡 핵심 메시지
 
-### "지식의 격차(Information Gap)"
+### MCP로 해결하는 "지식의 격차(Information Gap)"
 
-- 기존 AI: 학습 데이터 시점에 멈춤
-- Context7: 최신 문서에 실시간 연결
+#### 문제점: 기존 AI의 한계
 
-### "선언적 vs 명령형"
+- **고정된 지식**: 학습 데이터의 특정 시점에 갇혀 있음
+- **최신 정보 부족**: 새로운 라이브러리 버전, API 변경사항을 모름
+- **수동 업데이트**: 개발자가 직접 최신 문서를 찾아 제공해야 함
 
-- React 18: "어떻게(How)" - 모든 상태를 수동 관리
-- React 19: "무엇을(What)" - 원하는 결과만 선언
+#### 해결책: MCP를 통한 실시간 컨텍스트 연결
 
-## 🔗 참고 자료
+- **Context7**: 최신 라이브러리 문서를 실시간으로 학습
+- **GitHub**: 코드 변경 이력과 이슈를 자동으로 추적
+- **PlayWright**: 테스트 자동화로 리팩토링 안정성 보장
 
-- [React 19 공식 문서](https://react.dev/)
-- [React 19 릴리스 블로그](https://react.dev/blog/2024/12/05/react-19)
-- [React Compiler](https://react.dev/learn/react-compiler)
+#### 결과: 진정한 AI 페어 프로그래밍
 
-## 📝 라이센스
+MCP는 단순한 도구가 아닌, **AI에게 실시간 지식을 제공하는 파이프라인**입니다.  
+이를 통해 AI는 최신 베스트 프랙티스를 적용하고, 신뢰할 수 있는 코드를 생성할 수 있습니다.
 
-MIT
+---
+
+### 참고
+
+- context7을 gemini-cli에 연결하는 법: https://github.com/upstash/context7
+- Gihub MCP를 gemini-cli에 연결하는 법: https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-gemini-cli.md
