@@ -87,17 +87,12 @@ h4 {
   border: 3px solid #ea4335;
   border-radius: 12px;
   padding: 2rem;
-  background-color: rgba(248, 216, 216, 0.12);
+  background-color: rgba(234, 67, 53, 0.08);
   min-height: 450px;
   display: flex;
   flex-direction: column;
   min-width: 450px;
   transition: all 0.3s ease;
-}
-
-.section:hover {
-  box-shadow: 0 8px 24px rgba(234, 67, 53, 0.15);
-  transform: translateY(-2px);
 }
 
 .section.full-width {
@@ -108,13 +103,8 @@ h4 {
 
 .section.after {
   border: 3px solid #34a853;
-  background-color: rgba(204, 246, 197, 0.18);
+  background-color: rgba(52, 168, 83, 0.08);
   box-shadow: 0 0 0 3px rgba(52, 168, 83, 0.1);
-}
-
-.section.after:hover {
-  box-shadow: 0 8px 24px rgba(52, 168, 83, 0.2), 0 0 0 3px rgba(52, 168, 83, 0.15);
-  transform: translateY(-2px);
 }
 
 form {
@@ -143,7 +133,7 @@ input[type="text"]:hover {
 }
 
 input[type="text"]:focus {
-  border-color: #57caff;
+  border-color: #45b9ee;
   outline: none;
   background-color: rgba(30, 30, 30, 0.9);
   box-shadow: 0 0 0 3px rgba(87, 202, 255, 0.15);
@@ -170,14 +160,12 @@ button {
 }
 
 button::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
 }
 
 button:hover:not(:disabled)::before {
@@ -185,9 +173,7 @@ button:hover:not(:disabled)::before {
 }
 
 button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #57caff 0%, #6fb5ff 100%);
-  border-color: #57caff;
-  transform: translateY(-2px);
+  background: 6fb5ff;
   box-shadow: 0 6px 20px rgba(66, 133, 244, 0.5);
 }
 
@@ -226,7 +212,7 @@ button:disabled {
 }
 
 .loading::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 50%;
@@ -240,19 +226,23 @@ button:disabled {
 }
 
 @keyframes spin {
-  to { transform: translateY(-50%) rotate(360deg); }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
 }
 
 hr {
   margin: 3rem 0;
   border: none;
   height: 3px;
-  background: linear-gradient(90deg,
+  background: linear-gradient(
+    90deg,
     transparent 0%,
     rgba(66, 133, 244, 0.3) 20%,
     rgba(52, 168, 83, 0.3) 50%,
     rgba(251, 188, 4, 0.3) 80%,
-    transparent 100%);
+    transparent 100%
+  );
   border-radius: 2px;
 }
 
@@ -274,7 +264,6 @@ code {
   font-size: 0.8em;
   font-weight: 700;
   margin-left: 0.6em;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
 }
@@ -286,21 +275,11 @@ code {
   box-shadow: 0 2px 8px rgba(234, 67, 53, 0.3);
 }
 
-.badge.v18:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(234, 67, 53, 0.5);
-}
-
 .badge.v19 {
   background-color: #34a853;
   color: white;
   border: 2px solid #34a853;
   box-shadow: 0 2px 8px rgba(52, 168, 83, 0.3);
-}
-
-.badge.v19:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(52, 168, 83, 0.5);
 }
 
 .info-box {
@@ -313,23 +292,20 @@ code {
   transition: all 0.3s ease;
 }
 
-.info-box:hover {
-  background-color: rgba(195, 236, 246, 0.18);
-  border-left-width: 6px;
+.section .info-box {
+  border-left: 5px solid #ea4335;
+  background-color: rgba(234, 67, 53, 0.12);
+}
+
+.section.after .info-box {
+  border-left: 5px solid #34a853;
+  background-color: rgba(52, 168, 83, 0.12);
 }
 
 .info-box p {
   margin: 0.5em 0;
   color: rgba(255, 255, 255, 0.9);
   line-height: 1.7;
-}
-
-.info-box p:first-child {
-  margin-top: 0;
-}
-
-.info-box p:last-child {
-  margin-bottom: 0;
 }
 
 /* TextGenerator 스타일 */
@@ -392,13 +368,20 @@ textarea:disabled {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 .result-box {
-  background-color: rgba(204, 246, 197, 0.15);
+  background-color: rgba(52, 168, 83, 0.08);
   border-left: 5px solid #34a853;
   padding: 1.5rem;
   border-radius: 8px;
@@ -424,7 +407,7 @@ textarea:disabled {
   font-size: 1.1em;
 }
 
-.result-box pre {
+pre {
   margin: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
